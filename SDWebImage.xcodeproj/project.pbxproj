@@ -401,15 +401,15 @@
 				53922D88148C56230056699D /* SDWebImageCompat.h */,
 				5340674F167780C40042B59E /* SDWebImageCompat.m */,
 				530E49E71646388E002868E7 /* SDWebImageOperation.h */,
-				53922DAB148C56810056699D /* Downloader */,
-				53922DAA148C56470056699D /* Cache */,
-				53922DAC148C56DD0056699D /* Utils */,
-				53922DA9148C562D0056699D /* Categories */,
+				53922DAB148C56810056699D /* Downloader(下载) */,
+				53922DAA148C56470056699D /* Cache(缓存) */,
+				53922DAC148C56DD0056699D /* Utils(工具) */,
+				53922DA9148C562D0056699D /* Categories(分类) */,
 			);
 			path = SDWebImage;
 			sourceTree = "<group>";
 		};
-		53922DA9148C562D0056699D /* Categories */ = {
+		53922DA9148C562D0056699D /* Categories(分类) */ = {
 			isa = PBXGroup;
 			children = (
 				535699B415113E7300A4C397 /* MKAnnotationView+WebCache.h */,
@@ -431,19 +431,19 @@
 				AB615301192DA24600A2D8E9 /* UIView+WebCacheOperation.h */,
 				AB615302192DA24600A2D8E9 /* UIView+WebCacheOperation.m */,
 			);
-			name = Categories;
+			name = "Categories(分类)";
 			sourceTree = "<group>";
 		};
-		53922DAA148C56470056699D /* Cache */ = {
+		53922DAA148C56470056699D /* Cache(缓存) */ = {
 			isa = PBXGroup;
 			children = (
 				53922D85148C56230056699D /* SDImageCache.h */,
 				53922D86148C56230056699D /* SDImageCache.m */,
 			);
-			name = Cache;
+			name = "Cache(缓存)";
 			sourceTree = "<group>";
 		};
-		53922DAB148C56810056699D /* Downloader */ = {
+		53922DAB148C56810056699D /* Downloader(下载) */ = {
 			isa = PBXGroup;
 			children = (
 				53922D8B148C56230056699D /* SDWebImageDownloader.h */,
@@ -451,10 +451,10 @@
 				530E49E316460AE2002868E7 /* SDWebImageDownloaderOperation.h */,
 				530E49E416460AE2002868E7 /* SDWebImageDownloaderOperation.m */,
 			);
-			name = Downloader;
+			name = "Downloader(下载)";
 			sourceTree = "<group>";
 		};
-		53922DAC148C56DD0056699D /* Utils */ = {
+		53922DAC148C56DD0056699D /* Utils(工具) */ = {
 			isa = PBXGroup;
 			children = (
 				53922D8E148C56230056699D /* SDWebImageManager.h */,
@@ -464,7 +464,7 @@
 				53922D91148C56230056699D /* SDWebImagePrefetcher.h */,
 				53922D92148C56230056699D /* SDWebImagePrefetcher.m */,
 			);
-			name = Utils;
+			name = "Utils(工具)";
 			sourceTree = "<group>";
 		};
 		DA577C121998E60B007367ED /* libwebp */ = {

@@ -11,6 +11,7 @@
 #import "UIImage+MultiFormat.h"
 #import <CommonCrypto/CommonDigest.h>
 
+// 最大缓存时间 一周
 static const NSInteger kDefaultCacheMaxCacheAge = 60 * 60 * 24 * 7; // 1 week
 // PNG signature bytes and data (below)
 static unsigned char kPNGSignatureBytes[8] = {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
@@ -62,6 +63,7 @@ BOOL ImageDataHasPNGPreffix(NSData *data) {
         NSString *fullNamespace = [@"com.hackemist.SDWebImageCache." stringByAppendingString:ns];
 
         // Create IO serial queue
+        // 磁盘读写队列，串行队列
         _ioQueue = dispatch_queue_create("com.hackemist.SDWebImageCache", DISPATCH_QUEUE_SERIAL);
 
         // Init default values
@@ -81,16 +83,20 @@ BOOL ImageDataHasPNGPreffix(NSData *data) {
 
 #if TARGET_OS_IPHONE
         // Subscribe to app events
+        // 监听应用程序事件
+        // －接收到内存警告通知－清理内存操作
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(clearMemory)
                                                      name:UIApplicationDidReceiveMemoryWarningNotification
                                                    object:nil];
 
+        // －应用程序将要终止通知－执行清理磁盘操作
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(cleanDisk)
                                                      name:UIApplicationWillTerminateNotification
                                                    object:nil];
 
+        // - 进入后台通知
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(backgroundCleanDisk)
                                                      name:UIApplicationDidEnterBackgroundNotification
@@ -204,6 +210,8 @@ BOOL ImageDataHasPNGPreffix(NSData *data) {
     
     // this is an exception to access the filemanager on another queue than ioQueue, but we are using the shared instance
     // from apple docs on NSFileManager: The methods of the shared NSFileManager object can be called from multiple threads safely.
+    // 共享的 NSFileManager 对象可以保证在多线程运行时是安全的
+    // 检查文件是否存在
     exists = [[NSFileManager defaultManager] fileExistsAtPath:[self defaultCachePathForKey:key]];
     
     return exists;
@@ -370,7 +378,9 @@ BOOL ImageDataHasPNGPreffix(NSData *data) {
 - (void)clearDiskOnCompletion:(SDWebImageNoParamsBlock)completion
 {
     dispatch_async(self.ioQueue, ^{
+        // 删除缓存路径
         [_fileManager removeItemAtPath:self.diskCachePath error:nil];
+        // 再次创建缓存路径
         [_fileManager createDirectoryAtPath:self.diskCachePath
                 withIntermediateDirectories:YES
                                  attributes:nil
@@ -399,24 +409,29 @@ BOOL ImageDataHasPNGPreffix(NSData *data) {
                                                                       options:NSDirectoryEnumerationSkipsHiddenFiles
                                                                  errorHandler:NULL];
 
+        // 计算过期日期
         NSDate *expirationDate = [NSDate dateWithTimeIntervalSinceNow:-self.maxCacheAge];
         NSMutableDictionary *cacheFiles = [NSMutableDictionary dictionary];
         NSUInteger currentCacheSize = 0;
 
         // Enumerate all of the files in the cache directory.  This loop has two purposes:
+        // 遍历缓存路径中的所有文件，此循环要实现两个目的
         //
         //  1. Removing files that are older than the expiration date.
+        //     删除早于过期日期的文件
         //  2. Storing file attributes for the size-based cleanup pass.
+        //     保存文件属性以计算磁盘缓存占用空间
+        //
         NSMutableArray *urlsToDelete = [[NSMutableArray alloc] init];
         for (NSURL *fileURL in fileEnumerator) {
             NSDictionary *resourceValues = [fileURL resourceValuesForKeys:resourceKeys error:NULL];
 
-            // Skip directories.
+            // Skip directories. 跳过目录
             if ([resourceValues[NSURLIsDirectoryKey] boolValue]) {
                 continue;
             }
 
-            // Remove files that are older than the expiration date;
+            // Remove files that are older than the expiration date; 记录要删除的过期文件
             NSDate *modificationDate = resourceValues[NSURLContentModificationDateKey];
             if ([[modificationDate laterDate:expirationDate] isEqualToDate:expirationDate]) {
                 [urlsToDelete addObject:fileURL];
@@ -424,17 +439,20 @@ BOOL ImageDataHasPNGPreffix(NSData *data) {
             }
 
             // Store a reference to this file and account for its total size.
+            // 保存文件引用，以计算总大小
             NSNumber *totalAllocatedSize = resourceValues[NSURLTotalFileAllocatedSizeKey];
             currentCacheSize += [totalAllocatedSize unsignedIntegerValue];
             [cacheFiles setObject:resourceValues forKey:fileURL];
         }
         
+        // 删除过期的文件
         for (NSURL *fileURL in urlsToDelete) {
             [_fileManager removeItemAtURL:fileURL error:nil];
         }
 
         // If our remaining disk cache exceeds a configured maximum size, perform a second
         // size-based cleanup pass.  We delete the oldest files first.
+        // 如果剩余磁盘缓存空间超出最大限额，再次执行清理操作，删除最早的文件
         if (self.maxCacheSize > 0 && currentCacheSize > self.maxCacheSize) {
             // Target half of our maximum cache size for this cleanup pass.
             const NSUInteger desiredCacheSize = self.maxCacheSize / 2;

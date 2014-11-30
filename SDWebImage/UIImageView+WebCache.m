@@ -39,27 +39,38 @@ static char imageURLKey;
 }
 
 - (void)sd_setImageWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder options:(SDWebImageOptions)options progress:(SDWebImageDownloaderProgressBlock)progressBlock completed:(SDWebImageCompletionBlock)completedBlock {
+    // 取消当前图像下载
     [self sd_cancelCurrentImageLoad];
+    // 利用运行时retain url
     objc_setAssociatedObject(self, &imageURLKey, url, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 
     if (!(options & SDWebImageDelayPlaceholder)) {
         dispatch_main_async_safe(^{
+            // 设置占位图像
             self.image = placeholder;
         });
     }
     
     if (url) {
         __weak UIImageView *wself = self;
+        // 实例化 SDWebImageOperation 操作
         id <SDWebImageOperation> operation = [SDWebImageManager.sharedManager downloadImageWithURL:url options:options progress:progressBlock completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
             if (!wself) return;
             dispatch_main_sync_safe(^{
                 if (!wself) return;
+                // 如果得到图像
                 if (image) {
+                    // 记录图像
                     wself.image = image;
+                    // 重绘视图
                     [wself setNeedsLayout];
                 } else {
+                    // 如果没有得到图像
+                    // 如果设置了 SDWebImageDelayPlaceholder 选项
                     if ((options & SDWebImageDelayPlaceholder)) {
+                        // 设置占位图像
                         wself.image = placeholder;
+                        // 重绘视图
                         [wself setNeedsLayout];
                     }
                 }
