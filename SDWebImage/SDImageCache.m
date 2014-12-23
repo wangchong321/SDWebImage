@@ -49,7 +49,6 @@ BOOL ImageDataHasPNGPreffix(NSData *data) {
     static id instance;
     dispatch_once(&once, ^{
         instance = [self new];
-        kPNGSignatureData = [NSData dataWithBytes:kPNGSignatureBytes length:8];
     });
     return instance;
 }
@@ -61,6 +60,9 @@ BOOL ImageDataHasPNGPreffix(NSData *data) {
 - (id)initWithNamespace:(NSString *)ns {
     if ((self = [super init])) {
         NSString *fullNamespace = [@"com.hackemist.SDWebImageCache." stringByAppendingString:ns];
+
+        // initialise PNG signature data
+        kPNGSignatureData = [NSData dataWithBytes:kPNGSignatureBytes length:8];
 
         // Create IO serial queue
         // 磁盘读写队列，串行队列
