@@ -121,6 +121,7 @@ static NSString *const kCompletedCallbackKey = @"completed";
         }
 
         // In order to prevent from potential duplicate caching (NSURLCache + SDImageCache) we disable the cache for image requests if told otherwise
+        // 为防止重复缓存(NSURLCache + SDImageCache)，如果设置了 SDWebImageDownloaderUseNSURLCache，则禁用 SDImageCache 
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url cachePolicy:(options & SDWebImageDownloaderUseNSURLCache ? NSURLRequestUseProtocolCachePolicy : NSURLRequestReloadIgnoringLocalCacheData) timeoutInterval:timeoutInterval];
         request.HTTPShouldHandleCookies = (options & SDWebImageDownloaderHandleCookies);
         request.HTTPShouldUsePipelining = YES;
