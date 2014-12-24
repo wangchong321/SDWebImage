@@ -197,6 +197,7 @@
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
     
     //'304 Not Modified' is an exceptional one
+    // 服务器响应 "304-没有修改" 需要单独处理
     if ((![response respondsToSelector:@selector(statusCode)] || [((NSHTTPURLResponse *)response) statusCode] < 400) && [((NSHTTPURLResponse *)response) statusCode] != 304) {
         NSInteger expected = response.expectedContentLength > 0 ? (NSInteger)response.expectedContentLength : 0;
         self.expectedSize = expected;
@@ -389,6 +390,7 @@
 
 - (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse {
     responseFromCached = NO; // If this method is called, it means the response wasn't read from cache
+                             // 如果此方法被调用，说明响应不是从缓存读取的
     if (self.request.cachePolicy == NSURLRequestReloadIgnoringLocalCacheData) {
         // Prevents caching of responses
         return nil;
@@ -402,6 +404,7 @@
     return self.options & SDWebImageDownloaderContinueInBackground;
 }
 
+// 以下两个方法是 https 访问时使用的方法，关于凭据的设置部分代码在 SDWebImageDownloader.m 中搜索 username 就可以看到了
 - (BOOL)connectionShouldUseCredentialStorage:(NSURLConnection __unused *)connection {
     return self.shouldUseCredentialStorage;
 }

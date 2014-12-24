@@ -160,7 +160,9 @@ static NSString *const kCompletedCallbackKey = @"completed";
                                                             [sself removeCallbacksForURL:url];
                                                         }];
         
+        // 如果设置了用户名 & 口令
         if (wself.username && wself.password) {
+            // 设置 https 访问时身份验证使用的凭据
             operation.credential = [NSURLCredential credentialWithUser:wself.username password:wself.password persistence:NSURLCredentialPersistenceForSession];
         }
         
