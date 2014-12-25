@@ -14,6 +14,7 @@
 // 最大缓存时间 一周
 static const NSInteger kDefaultCacheMaxCacheAge = 60 * 60 * 24 * 7; // 1 week
 // PNG signature bytes and data (below)
+// PNG 签名字节和数据(PNG文件开始的8个字节是固定的)
 static unsigned char kPNGSignatureBytes[8] = {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
 static NSData *kPNGSignatureData = nil;
 
@@ -69,13 +70,16 @@ BOOL ImageDataHasPNGPreffix(NSData *data) {
         _ioQueue = dispatch_queue_create("com.hackemist.SDWebImageCache", DISPATCH_QUEUE_SERIAL);
 
         // Init default values
+        // 初始化默认数值，最大缓存时间一周
         _maxCacheAge = kDefaultCacheMaxCacheAge;
 
         // Init the memory cache
+        // 初始化内存缓存 NSCache
         _memCache = [[NSCache alloc] init];
         _memCache.name = fullNamespace;
 
         // Init the disk cache
+        // 初始化磁盘缓存（使用完整的命名空间名作为缓存文件目录名）
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
         _diskCachePath = [paths[0] stringByAppendingPathComponent:fullNamespace];
 
@@ -86,19 +90,19 @@ BOOL ImageDataHasPNGPreffix(NSData *data) {
 #if TARGET_OS_IPHONE
         // Subscribe to app events
         // 监听应用程序事件
-        // －接收到内存警告通知－清理内存操作
+        // －接收到内存警告通知－清理内存操作 - clearMemory
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(clearMemory)
                                                      name:UIApplicationDidReceiveMemoryWarningNotification
                                                    object:nil];
 
-        // －应用程序将要终止通知－执行清理磁盘操作
+        // －应用程序将要终止通知－执行清理磁盘操作 - cleanDisk
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(cleanDisk)
                                                      name:UIApplicationWillTerminateNotification
                                                    object:nil];
 
-        // - 进入后台通知
+        // - 进入后台通知 － 后台清理磁盘 - backgroundCleanDisk
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(backgroundCleanDisk)
                                                      name:UIApplicationDidEnterBackgroundNotification
@@ -466,6 +470,7 @@ BOOL ImageDataHasPNGPreffix(NSData *data) {
                                                             }];
 
             // Delete files until we fall below our desired cache size.
+            // 循环依次删除文件，直到低于期望的缓存限额
             for (NSURL *fileURL in sortedFiles) {
                 if ([_fileManager removeItemAtURL:fileURL error:nil]) {
                     NSDictionary *resourceValues = cacheFiles[fileURL];
