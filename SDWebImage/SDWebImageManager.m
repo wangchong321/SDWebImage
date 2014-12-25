@@ -130,6 +130,7 @@
 
     BOOL isFailedUrl = NO;
     @synchronized (self.failedURLs) {
+        // 检查黑名单
         isFailedUrl = [self.failedURLs containsObject:url];
     }
 
