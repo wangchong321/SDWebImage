@@ -80,7 +80,13 @@ typedef NS_ENUM(NSInteger, SDWebImageDownloaderExecutionOrder) {
     SDWebImageDownloaderLIFOExecutionOrder
 };
 
+/**
+ *  开始下载通知
+ */
 extern NSString *const SDWebImageDownloadStartNotification;
+/**
+ *  停止下载通知
+ */
 extern NSString *const SDWebImageDownloadStopNotification;
 
 typedef void(^SDWebImageDownloaderProgressBlock)(NSInteger receivedSize, NSInteger expectedSize);
@@ -95,6 +101,9 @@ typedef NSDictionary *(^SDWebImageDownloaderHeadersFilterBlock)(NSURL *url, NSDi
  */
 @interface SDWebImageDownloader : NSObject
 
+/**
+ *  设置并发下载数，默认为6
+ */
 @property (assign, nonatomic) NSInteger maxConcurrentDownloads;
 
 /**
