@@ -26,7 +26,8 @@ typedef NS_OPTIONS(NSUInteger, SDWebImageOptions) {
      * 默认情况下，在 UI 交互时也会启动图像下载，此标记取消这一特性
      *
      * leading to delayed download on UIScrollView deceleration for instance.
-     * 会推迟到滚动视图停止滚动之后再继续下载(这个注释是假的！)
+     * 会推迟到滚动视图停止滚动之后再继续下载
+     * 备注：NSURLConnection 的网络下载事件监听的运行循环模式是 NSDefaultRunLoopMode
      */
     SDWebImageLowPriority = 1 << 1,
 
