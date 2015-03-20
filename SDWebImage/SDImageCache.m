@@ -83,9 +83,10 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
         _memCache.name = fullNamespace;
 
         // Init the disk cache
-        // 初始化磁盘缓存（使用完整的命名空间名作为缓存文件目录名）
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        _diskCachePath = [paths[0] stringByAppendingPathComponent:fullNamespace];
+        _diskCachePath = [self makeDiskCachePath:fullNamespace];
+
+        // Set decompression to YES
+        _shouldDecompressImages = YES;
 
         dispatch_sync(_ioQueue, ^{
             _fileManager = [NSFileManager new];

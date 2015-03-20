@@ -100,7 +100,15 @@ typedef NSDictionary *(^SDWebImageDownloaderHeadersFilterBlock)(NSURL *url, NSDi
 @interface SDWebImageDownloader : NSObject
 
 /**
- *  设置并发下载数，默认为6
+ * Decompressing images that are downloaded and cached can improve peformance but can consume lot of memory.
+ * Defaults to YES. Set this to NO if you are experiencing a crash due to excessive memory consumption.
+ * <br />解压缩下载并缓存的图像可以提升性能，但是会消耗大量内存。
+ * 默认设置为 YES，如果内存消耗过大导致程序崩溃可以设置为 NO
+ */
+@property (assign, nonatomic) BOOL shouldDecompressImages;
+
+/**
+ * 设置并发下载数，默认为6
  */
 @property (assign, nonatomic) NSInteger maxConcurrentDownloads;
 
