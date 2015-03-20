@@ -173,14 +173,14 @@ typedef NSString *(^SDWebImageCacheKeyFilterBlock)(NSURL *url);
  * @code
 
 SDWebImageManager *manager = [SDWebImageManager sharedManager];
-[manager downloadWithURL:imageURL
-                 options:0
-                progress:nil
-               completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
-                   if (image) {
-                       // do something with image
-                   }
-               }];
+[manager downloadImageWithURL:imageURL
+                      options:0
+                     progress:nil
+                    completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+                        if (image) {
+                            // do something with image
+                        }
+                    }];
 
  * @endcode
  */
@@ -327,5 +327,26 @@ SDWebImageManager *manager = [SDWebImageManager sharedManager];
  * <br />返回指定 URL 的缓存键值，就是 URL 字符串
  */
 - (NSString *)cacheKeyForURL:(NSURL *)url;
+
+@end
+
+
+#pragma mark - Deprecated
+
+typedef void(^SDWebImageCompletedBlock)(UIImage *image, NSError *error, SDImageCacheType cacheType) __deprecated_msg("Block type deprecated. Use `SDWebImageCompletionBlock`");
+typedef void(^SDWebImageCompletedWithFinishedBlock)(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished) __deprecated_msg("Block type deprecated. Use `SDWebImageCompletionWithFinishedBlock`");
+
+
+@interface SDWebImageManager (Deprecated)
+
+/**
+ *  Downloads the image at the given URL if not present in cache or return the cached version otherwise.
+ *
+ *  @deprecated This method has been deprecated. Use `downloadImageWithURL:options:progress:completed:`
+ */
+- (id <SDWebImageOperation>)downloadWithURL:(NSURL *)url
+                                    options:(SDWebImageOptions)options
+                                   progress:(SDWebImageDownloaderProgressBlock)progressBlock
+                                  completed:(SDWebImageCompletedWithFinishedBlock)completedBlock __deprecated_msg("Method deprecated. Use `downloadImageWithURL:options:progress:completed:`");
 
 @end

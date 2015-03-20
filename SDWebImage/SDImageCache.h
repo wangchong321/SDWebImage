@@ -41,6 +41,12 @@ typedef void(^SDWebImageCalculateSizeBlock)(NSUInteger fileCount, NSUInteger tot
 @interface SDImageCache : NSObject
 
 /**
+ * Decompressing images that are downloaded and cached can improve peformance but can consume lot of memory.
+ * Defaults to YES. Set this to NO if you are experiencing a crash due to excessive memory consumption.
+ */
+@property (assign, nonatomic) BOOL shouldDecompressImages;
+
+/**
  * The maximum "total cost" of the in-memory image cache. The cost function is the number of pixels held in memory.
  * <br />最大内存图像缓存值，以像素值为单位，默认数值为0
  */
@@ -75,6 +81,8 @@ typedef void(^SDWebImageCalculateSizeBlock)(NSUInteger fileCount, NSUInteger tot
  * <br />缓存存储使用的命名空间
  */
 - (id)initWithNamespace:(NSString *)ns;
+
+-(NSString *)makeDiskCachePath:(NSString*)fullNamespace;
 
 /**
  * Add a read-only cache path to search for images pre-cached by SDImageCache

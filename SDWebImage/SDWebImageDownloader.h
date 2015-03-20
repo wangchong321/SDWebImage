@@ -62,8 +62,6 @@ typedef NS_OPTIONS(NSUInteger, SDWebImageDownloaderOptions) {
      * 将图像放入高优先级队列
      */
     SDWebImageDownloaderHighPriority = 1 << 7,
-    
-
 };
 
 typedef NS_ENUM(NSInteger, SDWebImageDownloaderExecutionOrder) {
@@ -110,7 +108,6 @@ typedef NSDictionary *(^SDWebImageDownloaderHeadersFilterBlock)(NSURL *url, NSDi
  * Shows the current amount of downloads that still need to be downloaded
  * <br />显示仍需要下载的数量
  */
-
 @property (readonly, nonatomic) NSUInteger currentDownloadCount;
 
 
