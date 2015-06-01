@@ -11,7 +11,29 @@
 #import "UIImage+MultiFormat.h"
 #import <CommonCrypto/CommonDigest.h>
 
-// 最大缓存时间 一周
+// See https://github.com/rs/SDWebImage/pull/1141 for discussion
+@interface AutoPurgeCache : NSCache
+@end
+
+@implementation AutoPurgeCache
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeAllObjects) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+
+}
+
+@end
+
 static const NSInteger kDefaultCacheMaxCacheAge = 60 * 60 * 24 * 7; // 1 week
 // PNG signature bytes and data (below)
 // PNG 签名字节和数据(PNG文件开始的8个字节是固定的)
@@ -78,8 +100,7 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
         _maxCacheAge = kDefaultCacheMaxCacheAge;
 
         // Init the memory cache
-        // 初始化内存缓存 NSCache
-        _memCache = [[NSCache alloc] init];
+        _memCache = [[AutoPurgeCache alloc] init];
         _memCache.name = fullNamespace;
 
         // Init the disk cache
