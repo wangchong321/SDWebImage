@@ -53,6 +53,11 @@ typedef void(^SDWebImageCalculateSizeBlock)(NSUInteger fileCount, NSUInteger tot
 @property (assign, nonatomic) NSUInteger maxMemoryCost;
 
 /**
+ * The maximum number of objects the cache should hold.
+ */
+@property (assign, nonatomic) NSUInteger maxMemoryCountLimit;
+
+/**
  * The maximum length of time to keep an image in the cache, in seconds
  * <br />缓存图像最长时间，以秒为单位，默认一周
  */

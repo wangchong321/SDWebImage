@@ -388,6 +388,14 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
     return self.memCache.totalCostLimit;
 }
 
+- (NSUInteger)maxMemoryCountLimit {
+    return self.memCache.countLimit;
+}
+
+- (void)setMaxMemoryCountLimit:(NSUInteger)maxCountLimit {
+    self.memCache.countLimit = maxCountLimit;
+}
+
 - (void)clearMemory {
     [self.memCache removeAllObjects];
 }
@@ -507,7 +515,11 @@ FOUNDATION_STATIC_INLINE NSUInteger SDCacheCostForImage(UIImage *image) {
 }
 
 - (void)backgroundCleanDisk {
-    UIApplication *application = [UIApplication sharedApplication];
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if(!UIApplicationClass || ![UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
+        return;
+    }
+    UIApplication *application = [UIApplication performSelector:@selector(sharedApplication)];
     __block UIBackgroundTaskIdentifier bgTask = [application beginBackgroundTaskWithExpirationHandler:^{
         // Clean up any unfinished task business by marking where you
         // stopped or ending the task outright.
